@@ -10,7 +10,7 @@ export default class Footer extends Component {
             <Navbar fixed="bottom" bg="dark" variant="dark">
                 <Container>
                     <Col lg={12} className="text-center text-muted">
-                        <div>{fullYear}-{fullYear+1}, All Rights Reserved by Almighty Java</div>
+                        <div>{fullYear}-{fullYear+1}, BSEP-PKI</div>
                     </Col>
                 </Container>
             </Navbar>

@@ -1,22 +1,22 @@
 import React, {Component} from 'react';
 
 import './Style.css';
-import {Card, Table, Image, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
+import {Card, Table, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faList, faEdit, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {Link} from 'react-router-dom';
 import MyToast from './MyToast';
 import axios from 'axios';
 
-export default class BookList extends Component {
+export default class CertificateList extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            books : [],
+            certificates : [],
             search : '',
             currentPage : 1,
-            booksPerPage : 5,
+            certificatesPerPage : 5,
             sortToggle : true
         };
     }
@@ -25,29 +25,21 @@ export default class BookList extends Component {
         this.setState(state => ({
             sortToggle : !state.sortToggle
         }));
-        this.findAllBooks(this.state.currentPage);
+        this.findAllCertificates(this.state.currentPage);
     }
 
     componentDidMount() {
-        this.findAllBooks(this.state.currentPage);
+        this.findAllCertificates(this.state.currentPage);
     }
 
-    /*findAllBooks() {
-        fetch("http://localhost:8081/rest/books")
-            .then(response => response.json())
-            .then((data) => {
-                this.setState({books: data});
-            });
-    };*/
-
-    findAllBooks(currentPage) {
+    findAllCertificates(currentPage) {
         currentPage -= 1;
         let sortDir = this.state.sortToggle ? "asc" : "desc";
-        axios.get("http://localhost:8081/rest/books?pageNumber="+currentPage+"&pageSize="+this.state.booksPerPage+"&sortBy=price&sortDir="+sortDir)
+        axios.get("http://localhost:8081/rest/certificates?pageNumber="+currentPage+"&pageSize="+this.state.certificatesPerPage+"&sortBy=price&sortDir="+sortDir)
             .then(response => response.data)
             .then((data) => {
                 this.setState({
-                    books: data.content,
+                    certificates: data.content,
                     totalPages: data.totalPages,
                     totalElements: data.totalElements,
                     currentPage: data.number + 1
@@ -55,32 +47,14 @@ export default class BookList extends Component {
             });
     };
 
-    /*deleteBook = (bookId) => {
-        fetch("http://localhost:8081/rest/books/"+bookId, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then((book) => {
-            if(book) {
-                this.setState({"show":true});
-                setTimeout(() => this.setState({"show":false}), 3000);
-                this.setState({
-                    books: this.state.books.filter(book => book.id !== bookId)
-                });
-            } else {
-                this.setState({"show":false});
-            }
-        });
-    };*/
-
-    deleteBook = (bookId) => {
-        axios.delete("http://localhost:8081/rest/books/"+bookId)
+    deleteCertificate = (certificateId) => {
+        axios.delete("http://localhost:8081/rest/certificates/"+certificateId)
             .then(response => {
                 if(response.data != null) {
                     this.setState({"show":true});
                     setTimeout(() => this.setState({"show":false}), 3000);
                     this.setState({
-                        books: this.state.books.filter(book => book.id !== bookId)
+                        certificates: this.state.certificates.filter(certificate => certificate.id !== certificateId)
                     });
                 } else {
                     this.setState({"show":false});
@@ -93,7 +67,7 @@ export default class BookList extends Component {
         if(this.state.search) {
             this.searchData(targetPage);
         } else {
-            this.findAllBooks(targetPage);
+            this.findAllCertificates(targetPage);
         }
         this.setState({
             [event.target.name]: targetPage
@@ -106,7 +80,7 @@ export default class BookList extends Component {
             if(this.state.search) {
                 this.searchData(firstPage);
             } else {
-                this.findAllBooks(firstPage);
+                this.findAllCertificates(firstPage);
             }
         }
     };
@@ -117,28 +91,28 @@ export default class BookList extends Component {
             if(this.state.search) {
                 this.searchData(this.state.currentPage - prevPage);
             } else {
-                this.findAllBooks(this.state.currentPage - prevPage);
+                this.findAllCertificates(this.state.currentPage - prevPage);
             }
         }
     };
 
     lastPage = () => {
-        let condition = Math.ceil(this.state.totalElements / this.state.booksPerPage);
+        let condition = Math.ceil(this.state.totalElements / this.state.certificatesPerPage);
         if(this.state.currentPage < condition) {
             if(this.state.search) {
                 this.searchData(condition);
             } else {
-                this.findAllBooks(condition);
+                this.findAllCertificates(condition);
             }
         }
     };
 
     nextPage = () => {
-        if(this.state.currentPage < Math.ceil(this.state.totalElements / this.state.booksPerPage)) {
+        if(this.state.currentPage < Math.ceil(this.state.totalElements / this.state.certificatesPerPage)) {
             if(this.state.search) {
                 this.searchData(this.state.currentPage + 1);
             } else {
-                this.findAllBooks(this.state.currentPage + 1);
+                this.findAllCertificates(this.state.currentPage + 1);
             }
         }
     };
@@ -151,16 +125,16 @@ export default class BookList extends Component {
 
     cancelSearch = () => {
         this.setState({"search" : ''});
-        this.findAllBooks(this.state.currentPage);
+        this.findAllCertificates(this.state.currentPage);
     };
 
     searchData = (currentPage) => {
         currentPage -= 1;
-        axios.get("http://localhost:8081/rest/books/search/"+this.state.search+"?page="+currentPage+"&size="+this.state.booksPerPage)
+        axios.get("http://localhost:8081/rest/certificates/search/"+this.state.search+"?page="+currentPage+"&size="+this.state.certificatesPerPage)
             .then(response => response.data)
             .then((data) => {
                 this.setState({
-                    books: data.content,
+                    certificates: data.content,
                     totalPages: data.totalPages,
                     totalElements: data.totalElements,
                     currentPage: data.number + 1
@@ -169,17 +143,17 @@ export default class BookList extends Component {
     };
 
     render() {
-        const {books, currentPage, totalPages, search} = this.state;
+        const {certificates, currentPage, totalPages, search} = this.state;
 
         return (
             <div>
                 <div style={{"display":this.state.show ? "block" : "none"}}>
-                    <MyToast show = {this.state.show} message = {"Book Deleted Successfully."} type = {"danger"}/>
+                    <MyToast show = {this.state.show} message = {"Certificate Deleted Successfully."} type = {"danger"}/>
                 </div>
                 <Card className={"border border-dark bg-dark text-white"}>
                     <Card.Header>
                         <div style={{"float":"left"}}>
-                            <FontAwesomeIcon icon={faList} /> Book List
+                            <FontAwesomeIcon icon={faList} /> Certificate List
                         </div>
                         <div style={{"float":"right"}}>
                              <InputGroup size="sm">
@@ -201,35 +175,38 @@ export default class BookList extends Component {
                         <Table bordered hover striped variant="dark">
                             <thead>
                                 <tr>
-                                  <th>Title</th>
-                                  <th>Author</th>
-                                  <th>ISBN Number</th>
-                                  <th onClick={this.sortData}>Price <div className={this.state.sortToggle ? "arrow arrow-down" : "arrow arrow-up"}> </div></th>
-                                  <th>Language</th>
-                                  <th>Genre</th>
-                                  <th>Actions</th>
+                                    <th>Subject</th>
+                                    <th>Issuer</th>
+                                    <th>Start Date</th>
+                                    <th >End Date </th>
+                                    <th>Name</th>
+                                    <th>Surname</th>
+                                    <th>Email</th>
+                                    <th>Type</th>
+                                    <th>Extension</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {
-                                    books.length === 0 ?
+                                    certificates.length === 0 ?
                                     <tr align="center">
-                                      <td colSpan="7">No Books Available.</td>
+                                      <td colSpan="7">No certificates Available.</td>
                                     </tr> :
-                                    books.map((book) => (
-                                    <tr key={book.id}>
-                                        <td>
-                                            <Image src={book.coverPhotoURL} roundedCircle width="25" height="25"/> {book.title}
-                                        </td>
-                                        <td>{book.author}</td>
-                                        <td>{book.isbnNumber}</td>
-                                        <td>{book.price}</td>
-                                        <td>{book.language}</td>
-                                        <td>{book.genre}</td>
+                                        certificates.map((certificate) => (
+                                    <tr key={certificate.id}>
+                                        <td>{certificate.subject}</td>
+                                        <td>{certificate.issuer}</td>
+                                        <td>{certificate.startDate}</td>
+                                        <td>{certificate.endDate}</td>
+                                        <td>{certificate.name}</td>
+                                        <td>{certificate.surname}</td>
+                                        <td>{certificate.email}</td>
+                                        <td>{certificate.type}</td>
+                                        <td>{certificate.extension}</td>
                                         <td>
                                             <ButtonGroup>
-                                                <Link to={"edit/"+book.id} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faEdit} /></Link>{' '}
-                                                <Button size="sm" variant="outline-danger" onClick={this.deleteBook.bind(this, book.id)}><FontAwesomeIcon icon={faTrash} /></Button>
+                                                <Link to={"edit/"+certificate.id} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faEdit} /></Link>{' '}
+                                                <Button size="sm" variant="outline-danger" onClick={this.deleteCertificate.bind(this, certificate.id)}><FontAwesomeIcon icon={faTrash} /></Button>
                                             </ButtonGroup>
                                         </td>
                                     </tr>
@@ -238,7 +215,7 @@ export default class BookList extends Component {
                               </tbody>
                         </Table>
                     </Card.Body>
-                    {books.length > 0 ?
+                    {certificates.length > 0 ?
                         <Card.Footer>
                             <div style={{"float":"left"}}>
                                 Showing Page {currentPage} of {totalPages}

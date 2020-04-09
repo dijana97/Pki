@@ -6,16 +6,14 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 import NavigationBar from './components/NavigationBar';
 import Welcome from './components/Welcome';
-import Book from './components/Book';
-import BookList from './components/BookList';
+import Certificate from './components/Certificate';
+import CertificateList from './components/CertificateList';
 import UserList from './components/UserList';
 import Footer from './components/Footer';
 
 export default function App() {
 
-  const heading = "Welcome to Book Shop";
-  const quote = "Good friends, good books, and a sleepy conscience: this is the ideal life.";
-  const footer = "Mark Twain";
+  const heading = "Public key infrastructure";
 
   return (
     <Router>
@@ -24,10 +22,10 @@ export default function App() {
             <Row>
                 <Col lg={12} className={"margin-top"}>
                     <Switch>
-                        <Route path="/" exact component={() => <Welcome heading={heading} quote={quote} footer={footer}/>}/>
-                        <Route path="/add" exact component={Book}/>
-                        <Route path="/edit/:id" exact component={Book}/>
-                        <Route path="/list" exact component={BookList}/>
+                        <Route path="/" exact component={() => <Welcome heading={heading}/>}/>
+                        <Route path="/add" exact component={Certificate}/>
+                        <Route path="/edit/:id" exact component={Certificate}/>
+                        <Route path="/list" exact component={CertificateList}/>
                         <Route path="/users" exact component={UserList}/>
                     </Switch>
                 </Col>

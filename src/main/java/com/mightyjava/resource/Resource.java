@@ -16,7 +16,7 @@ public interface Resource<T> {
 	ResponseEntity<Page<T>> findAll(Pageable pageable, @PathVariable String searchText);
 
 	@GetMapping
-	ResponseEntity<Page<T>> findAll(int pageNumber, int pageSize, String sortBy, String sortDir);
+	ResponseEntity<Page<T>> findAll(int pageNumber, int pageSize);
 	
 	@GetMapping("{id}")
 	ResponseEntity<T> findById(@PathVariable Long id);

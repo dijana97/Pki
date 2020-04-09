@@ -7,11 +7,11 @@ export default function NavigationBar() {
     return (
         <Navbar bg="dark" variant="dark">
             <Link to={""} className="navbar-brand">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_icon_1.png" width="25" height="25" alt="brand"/> Book Shop
+                <img src="https://w0.pngwave.com/png/507/808/computer-icons-academic-certificate-icon-design-skills-certificate-icon-png-clip-art.png" width="25" height="25" alt="brand"/> PKI
             </Link>
             <Nav className="mr-auto">
-                <Link to={"add"} className="nav-link">Add Book</Link>
-                <Link to={"list"} className="nav-link">Book List</Link>
+                <Link to={"add"} className="nav-link">Add Certificate</Link>
+                <Link to={"list"} className="nav-link">Certificate List</Link>
                 <Link to={"users"} className="nav-link">User List</Link>
             </Nav>
         </Navbar>
