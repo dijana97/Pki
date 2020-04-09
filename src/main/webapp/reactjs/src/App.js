@@ -9,7 +9,7 @@ import Welcome from './components/Welcome';
 import Certificate from './components/Certificate';
 import CertificateList from './components/CertificateList';
 import UserList from './components/UserList';
-import Footer from './components/Footer';
+
 
 export default function App() {
 
@@ -31,7 +31,6 @@ export default function App() {
                 </Col>
             </Row>
         </Container>
-        <Footer/>
     </Router>
   );
 }

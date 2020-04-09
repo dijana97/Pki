@@ -32,6 +32,16 @@ public class Certificate {
 
     private String type;
 
+    private String aim;
+
+    public String getAim() {
+        return aim;
+    }
+
+    public void setAim(String aim) {
+        this.aim = aim;
+    }
+
     public String getRevoked() {
         return revoked;
     }

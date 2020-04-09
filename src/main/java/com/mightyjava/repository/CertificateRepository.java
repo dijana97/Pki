@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CertificateRepository extends PagingAndSortingRepository<Certificate, Long> {
 
-    @Query("From Certificate c WHERE c.subject=:searchText OR c.issuer=:searchText OR c.name=:searchText OR c.surname=:searchText")
+    @Query("From Certificate c WHERE c.subject=:searchText OR c.aim=:searchText OR c.issuer=:searchText OR c.name=:searchText OR c.surname=:searchText")
     Page<Certificate> findAllCertificate(Pageable pageable, @Param("searchText") String searchText);
 }

@@ -13,7 +13,7 @@ export default class Certificate extends Component {
         this.state = this.initialState;
         this.state = {
             genres: [],
-            languages : [],
+            types : [],
             show : false
         };
         this.certificateChange = this.certificateChange.bind(this);
@@ -21,7 +21,7 @@ export default class Certificate extends Component {
     }
 
     initialState = {
-        id:'', subject:'', issuer:'', startDate:'', endDate:'', name:'', surname:'',email:'',extension:'',type:''
+        id:'', subject:'', issuer:'',aim:'', startDate:'', endDate:'', name:'', surname:'',email:'',extension:'',type:''
     };
 
     componentDidMount() {
@@ -29,17 +29,17 @@ export default class Certificate extends Component {
         if(certificateId) {
             this.findCertificateById(certificateId);
         }
-      //  this.findAllType();
+        this.findAllTypes();
     }
 
-    findAllLanguages = () => {
-        axios.get("http://localhost:8081/rest/certificates/languages")
+    findAllTypes = () => {
+        axios.get("http://localhost:8081/rest/certificates/type")
             .then(response => response.data)
             .then((data) => {
                 this.setState({
-                    languages: [{value:'', display:'Select Language'}]
-                        .concat(data.map(language => {
-                            return {value:language, display:language}
+                    types: [{value:'', display:'Select Certificate Type'}]
+                        .concat(data.map(type => {
+                            return {value:type, display:type}
                         }))
                 });
             });
@@ -67,6 +67,7 @@ export default class Certificate extends Component {
                         id: response.data.id,
                         subject: response.data.subject,
                         issuer: response.data.issuer,
+                        aim: response.data.aim,
                         startDate: response.data.startDate,
                         endDate: response.data.endDate,
                         language: response.data.language,
@@ -95,6 +96,7 @@ export default class Certificate extends Component {
 
             subject: this.state.subject,
             issuer: this.state.issuer,
+            aim: this.state.aim,
             startDate: this.state.startDate,
             endDate: this.state.endDate,
             extension: this.state.extension,
@@ -126,6 +128,7 @@ export default class Certificate extends Component {
             id: this.state.id,
             subject: this.state.subject,
             issuer: this.state.issuer,
+            aim: this.state.aim,
             startDate: this.state.startDate,
             endDate: this.state.endDate,
             name: this.state.name,
@@ -160,7 +163,7 @@ export default class Certificate extends Component {
     };
 
     render() {
-        const {subject, issuer, startDate, endDate, name, surname, email,type,extension} = this.state;
+        const {subject, issuer,aim, startDate, endDate, name, surname, email,type,extension} = this.state;
 
         return (
             <div>
@@ -173,6 +176,21 @@ export default class Certificate extends Component {
                     </Card.Header>
                     <Form onReset={this.resetCerrtificate} onSubmit={this.state.id ? this.updateCertificate : this.submitCertificate} id="certificateFormId">
                         <Card.Body>
+                            <Form.Row>
+                                <Form.Group as={Col} controlId="formGridType">
+                                    <Form.Label>Type</Form.Label>
+                                    <Form.Control required as="select"
+                                                  custom onChange={this.certificateChange}
+                                                  name="type" value={type}
+                                                  className={"bg-dark text-white"}>
+                                        {this.state.types.map(type =>
+                                            <option key={type.value} value={type.value}>
+                                                {type.display}
+                                            </option>
+                                        )}
+                                    </Form.Control>
+                                </Form.Group>
+                            </Form.Row>
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridSubject">
                                     <Form.Label>Subject</Form.Label>
@@ -190,6 +208,17 @@ export default class Certificate extends Component {
                                         className={"bg-dark text-white"}
                                         placeholder="Enter Certificate Issuer" />
                                 </Form.Group>
+                            </Form.Row>
+                            <Form.Row>
+                                <Form.Group as={Col} controlId="formGridAim">
+                                    <Form.Label>Aim</Form.Label>
+                                    <Form.Control required autoComplete="off"
+                                                  type="test" name="aim"
+                                                  value={aim} onChange={this.certificateChange}
+                                                  className={"bg-dark text-white"}
+                                                  placeholder="Enter Certificate Aim" />
+                                </Form.Group>
+
                             </Form.Row>
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridCoverStartDate">
@@ -236,14 +265,7 @@ export default class Certificate extends Component {
                                                   className={"bg-dark text-white"}
                                                   placeholder="Enter certificate name" />
                                 </Form.Group>
-                                    <Form.Group as={Col} controlId="formGridType">
-                                        <Form.Label>Type</Form.Label>
-                                        <Form.Control required autoComplete="off"
-                                                      type="test" name="type"
-                                                      value={type} onChange={this.certificateChange}
-                                                      className={"bg-dark text-white"}
-                                                      placeholder="Enter certificate type" />
-                                    </Form.Group>
+
                             <Form.Group as={Col} controlId="formGridExtension">
                                 <Form.Label>Extension</Form.Label>
                                 <Form.Control required autoComplete="off"

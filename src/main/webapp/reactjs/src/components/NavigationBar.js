@@ -12,7 +12,6 @@ export default function NavigationBar() {
             <Nav className="mr-auto">
                 <Link to={"add"} className="nav-link">Add Certificate</Link>
                 <Link to={"list"} className="nav-link">Certificate List</Link>
-                <Link to={"users"} className="nav-link">User List</Link>
             </Nav>
         </Navbar>
     );

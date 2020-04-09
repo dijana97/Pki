@@ -61,4 +61,9 @@ public class CertificateResourceImpl implements Resource<Certificate> {
         return new ResponseEntity<>(certificateIService.deleteById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/type")
+    public  ResponseEntity<Set<String>> findAllTypes() {
+        return new ResponseEntity<>(new TreeSet<>(Arrays.asList("Root", "Intermediate", "End-entity")), HttpStatus.OK);
+    }
+
 }

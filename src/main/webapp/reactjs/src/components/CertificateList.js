@@ -177,6 +177,7 @@ export default class CertificateList extends Component {
                                 <tr>
                                     <th>Subject</th>
                                     <th>Issuer</th>
+                                    <th>Aim</th>
                                     <th>Start Date</th>
                                     <th >End Date </th>
                                     <th>Name</th>
@@ -196,6 +197,7 @@ export default class CertificateList extends Component {
                                     <tr key={certificate.id}>
                                         <td>{certificate.subject}</td>
                                         <td>{certificate.issuer}</td>
+                                        <td>{certificate.aim}</td>
                                         <td>{certificate.startDate}</td>
                                         <td>{certificate.endDate}</td>
                                         <td>{certificate.name}</td>
