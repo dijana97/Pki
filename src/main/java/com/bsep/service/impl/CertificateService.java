@@ -4,6 +4,7 @@ import com.bsep.certificates.CertificateGenerator;
 import com.bsep.data.IssuerData;
 import com.bsep.data.SubjectData;
 import com.bsep.domain.Certificate;
+import com.bsep.keystores.KeyStoreReader;
 import com.bsep.keystores.KeyStoreWriter;
 import com.bsep.repository.CertificateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,12 @@ public class CertificateService {
 
     @Autowired
     private CertificateRepository certificateRepository;
+
+    @Autowired
+    private KeyStoreWriter keyStoreWriter;
+
+    @Autowired
+    private KeyStoreReader keyStoreReader;
 
     private KeyPair getKeyPair(){
         try {
@@ -94,9 +101,42 @@ public class CertificateService {
             kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
             return true;
         }
-        else{
+        else if(type.equals("Intermediate")){
+
+            Certificate cer = certificateRepository.save(certificate);
+            IssuerData issuerData = keyStoreReader.readIssuerFromStore("cert.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
+            KeyPair subjectKey = getKeyPair();
+            SubjectData subjectData = getSubjectData(cer,subjectKey.getPublic());
+            CertificateGenerator certGenerator = new CertificateGenerator();
+            X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
+            String keyStoreFile = "";
+            keyStoreFile = "cert.jks";
+
+            KeyStoreWriter kw = new KeyStoreWriter();
+            kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
+            kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(), certX509);
+            kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
+            return true;
+        }else if(type.equals("End-entity")){
+
+            Certificate cer = certificateRepository.save(certificate);
+            IssuerData issuerData = keyStoreReader.readIssuerFromStore("cert.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
+            KeyPair subjectKey = getKeyPair();
+            SubjectData subjectData = getSubjectData(cer,subjectKey.getPublic());
+            CertificateGenerator certGenerator = new CertificateGenerator();
+            X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
+            String keyStoreFile = "";
+            keyStoreFile = "endentity.jks";
+
+            KeyStoreWriter kw = new KeyStoreWriter();
+            kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
+            kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(), certX509);
+            kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
+            return true;
+        }else{
             return false;
         }
+
 
     }
 

@@ -11,7 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.cert.CertificateException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class KeyStoreWriter {
 
 

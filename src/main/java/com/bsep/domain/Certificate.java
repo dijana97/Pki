@@ -34,6 +34,16 @@ public class Certificate {
 
     private String aim;
 
+    private boolean withdrawn;
+
+    public boolean isWithdrawn() {
+        return withdrawn;
+    }
+
+    public void setWithdrawn(boolean withdrawn) {
+        this.withdrawn = withdrawn;
+    }
+
     public String getAim() {
         return aim;
     }

@@ -21,7 +21,7 @@ export default class Certificate extends Component {
     }
 
     initialState = {
-        id:'', subject:'', issuer:'',aim:'', startDate:'', endDate:'', name:'', surname:'',email:'',extension:'',type:''
+        id:'', subject:'', issuer:'',aim:'', startDate:'', endDate:'', name:'', surname:'',email:'',extension:'',type:'',withdrawn:''
     };
 
     componentDidMount() {
@@ -75,7 +75,8 @@ export default class Certificate extends Component {
                         surname: response.data.surname,
                         email: response.data.email,
                         type: response.data.type,
-                        extension:response.data.type
+                        extension:response.data.extension,
+                        withdrawn:response.data.withdrawn
 
                     });
                 }
@@ -103,7 +104,9 @@ export default class Certificate extends Component {
             name: this.state.name,
             surname: this.state.surname,
             email: this.state.email,
-            type: this.state.type
+            type: this.state.type,
+            withdrawn: false
+
 
 
         };
@@ -123,7 +126,7 @@ export default class Certificate extends Component {
 
     updateCertificate = event => {
         event.preventDefault();
-
+        console.log(this.refs.check_me.checked);
         const certificate = {
             id: this.state.id,
             subject: this.state.subject,
@@ -135,7 +138,8 @@ export default class Certificate extends Component {
             surname: this.state.surname,
             email: this.state.email,
             type: this.state.type,
-            extension: this.state.extension
+            extension: this.state.extension,
+            withdrawn: this.refs.check_me.checked
         };
 
         axios.put("http://localhost:8081/rest/certificates", certificate)
@@ -275,7 +279,29 @@ export default class Certificate extends Component {
                                               placeholder="Enter certificate extension" />
                             </Form.Group>
                                 </Form.Row>
+                                <Form.Row>
+                                    <Form>
+                                        {['checkbox'].map((checked) => (
+                                            <div key={`default-${checked}`} className="mb-3">
+                                                {this.state.id ? <Form.Check
+                                                    type={checked}
+                                                    id={`default-${checked}`}
+                                                    label={`whitdraw`}
+                                                    ref="check_me"
 
+                                                /> :  <Form.Check
+                                                    disabled
+                                                    type={checked}
+                                                    label={`whitdraw`}
+                                                    id={`disabled-default-${checked}`}
+                                                />}
+
+
+
+                                            </div>
+                                        ))}
+                                    </Form>
+                                </Form.Row>
                         </Card.Body>
                         <Card.Footer style={{"textAlign":"right"}}>
                             <Button size="sm" variant="success" type="submit">

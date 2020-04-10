@@ -32,6 +32,7 @@ public class Application implements CommandLineRunner {
 			certificate.setRevoked("false");
 			certificate.setIssuer("mali");
 			certificate.setType("root");
+			certificate.setWithdrawn(false);
 			service.saveOrUpdate(certificate);
 		}
 	}
