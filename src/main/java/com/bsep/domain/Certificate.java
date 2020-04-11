@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 public class Certificate {
@@ -16,9 +17,9 @@ public class Certificate {
 
     private String issuer;
 
-    private String startDate;
+    private Date startDate;
 
-    private String endDate;
+    private Date endDate;
 
     private String revoked;
 
@@ -27,6 +28,8 @@ public class Certificate {
     private String surname;
 
     private String email;
+
+    private String aimroot;
 
     private String extension;
 
@@ -38,6 +41,14 @@ public class Certificate {
 
     public boolean isWithdrawn() {
         return withdrawn;
+    }
+
+    public String getAimroot() {
+        return aimroot;
+    }
+
+    public void setAimroot(String aimroot) {
+        this.aimroot = aimroot;
     }
 
     public void setWithdrawn(boolean withdrawn) {
@@ -88,19 +99,19 @@ public class Certificate {
         this.issuer = issuer;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

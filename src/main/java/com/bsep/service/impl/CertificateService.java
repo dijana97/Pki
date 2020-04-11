@@ -7,6 +7,7 @@ import com.bsep.domain.Certificate;
 import com.bsep.keystores.KeyStoreReader;
 import com.bsep.keystores.KeyStoreWriter;
 import com.bsep.repository.CertificateRepository;
+import com.bsep.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
@@ -15,6 +16,9 @@ import java.security.*;
 import java.security.cert.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +40,9 @@ public class CertificateService {
     @Autowired
     private KeyStoreReader keyStoreReader;
 
+    @Autowired
+    private IService<Certificate> certificateIService;
+
     private KeyPair getKeyPair(){
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
@@ -53,18 +60,13 @@ public class CertificateService {
 
     private SubjectData getSubjectData(Certificate certificate, PublicKey pk) {
         //KeyPair keyPairSubject = getKeyPair();
-        Date startDate= null;
-        try {
-            startDate = new SimpleDateFormat("dd/MM/yyyy").parse(certificate.getStartDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Date endDate= null;
-        try {
-            endDate = new SimpleDateFormat("dd/MM/yyyy").parse(certificate.getEndDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+
+
+       Date startDate = certificate.getStartDate();
+
+
+       Date endDate = certificate.getEndDate();
+
 
         String serialNumber = certificate.getSubject();
 
@@ -79,66 +81,118 @@ public class CertificateService {
 
     public boolean createRootCertificate(Certificate certificate, String type){
 
-        if(type.equals("Root")){
-            Certificate cer = certificateRepository.save(certificate);
-            KeyPair selfKey = getKeyPair();
-            SubjectData subjectData = getSubjectData(cer,selfKey.getPublic());
+        if(validation(certificate)) {
+            if (type.equals("Root")) {
+                Certificate cer = certificateRepository.save(certificate);
+                KeyPair selfKey = getKeyPair();
+                SubjectData subjectData = getSubjectData(cer, selfKey.getPublic());
 
-            X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-            builder.addRDN(BCStyle.CN, certificate.getName() + " " + certificate.getSurname());
-            builder.addRDN(BCStyle.SURNAME, certificate.getName());
-            builder.addRDN(BCStyle.GIVENNAME, certificate.getSurname());
-            builder.addRDN(BCStyle.E, certificate.getEmail());
+                X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+                builder.addRDN(BCStyle.CN, certificate.getName() + " " + certificate.getSurname());
+                builder.addRDN(BCStyle.SURNAME, certificate.getName());
+                builder.addRDN(BCStyle.GIVENNAME, certificate.getSurname());
+                builder.addRDN(BCStyle.E, certificate.getEmail());
 
-            IssuerData issuerData = new IssuerData(selfKey.getPrivate(), builder.build());
-            CertificateGenerator certGenerator = new CertificateGenerator();
-            X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
+                IssuerData issuerData = new IssuerData(selfKey.getPrivate(), builder.build());
+                CertificateGenerator certGenerator = new CertificateGenerator();
+                X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
 
-            String keyStoreFile = "cert.jks";
-            KeyStoreWriter kw = new KeyStoreWriter();
-            kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
-            kw.write(subjectData.getSerialNumber(), selfKey.getPrivate(), "bsep20".toCharArray(), certX509);
-            kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
-            return true;
+                String keyStoreFile = "cert.jks";
+                KeyStoreWriter kw = new KeyStoreWriter();
+                kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
+                kw.write(subjectData.getSerialNumber(), selfKey.getPrivate(), "bsep20".toCharArray(), certX509);
+                kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
+                return true;
+            } else if (type.equals("Intermediate")) {
+
+                Certificate cer = certificateRepository.save(certificate);
+                IssuerData issuerData = keyStoreReader.readIssuerFromStore("cert.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
+                KeyPair subjectKey = getKeyPair();
+                SubjectData subjectData = getSubjectData(cer, subjectKey.getPublic());
+                CertificateGenerator certGenerator = new CertificateGenerator();
+                X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
+                String keyStoreFile = "";
+                keyStoreFile = "cert.jks";
+
+                KeyStoreWriter kw = new KeyStoreWriter();
+                kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
+                kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(), certX509);
+                kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
+                return true;
+            } else if (type.equals("End-entity")) {
+
+                Certificate cer = certificateRepository.save(certificate);
+                IssuerData issuerData = keyStoreReader.readIssuerFromStore("cert.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
+                KeyPair subjectKey = getKeyPair();
+                SubjectData subjectData = getSubjectData(cer, subjectKey.getPublic());
+                CertificateGenerator certGenerator = new CertificateGenerator();
+                X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
+                String keyStoreFile = "";
+                keyStoreFile = "endentity.jks";
+
+                KeyStoreWriter kw = new KeyStoreWriter();
+                kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
+                kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(), certX509);
+                kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
+                return true;
+            } else {
+                return false;
+            }
+
         }
-        else if(type.equals("Intermediate")){
 
-            Certificate cer = certificateRepository.save(certificate);
-            IssuerData issuerData = keyStoreReader.readIssuerFromStore("cert.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
-            KeyPair subjectKey = getKeyPair();
-            SubjectData subjectData = getSubjectData(cer,subjectKey.getPublic());
-            CertificateGenerator certGenerator = new CertificateGenerator();
-            X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
-            String keyStoreFile = "";
-            keyStoreFile = "cert.jks";
-
-            KeyStoreWriter kw = new KeyStoreWriter();
-            kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
-            kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(), certX509);
-            kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
-            return true;
-        }else if(type.equals("End-entity")){
-
-            Certificate cer = certificateRepository.save(certificate);
-            IssuerData issuerData = keyStoreReader.readIssuerFromStore("cert.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
-            KeyPair subjectKey = getKeyPair();
-            SubjectData subjectData = getSubjectData(cer,subjectKey.getPublic());
-            CertificateGenerator certGenerator = new CertificateGenerator();
-            X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
-            String keyStoreFile = "";
-            keyStoreFile = "endentity.jks";
-
-            KeyStoreWriter kw = new KeyStoreWriter();
-            kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
-            kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(), certX509);
-            kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
-            return true;
-        }else{
-            return false;
-        }
-
-
+        return false;
     }
 
+
+    public boolean validation(Certificate certificate){
+        boolean provera = true;
+
+        List<Certificate>certificates = (List<Certificate>) certificateRepository.findAll();
+        for(Certificate c:certificates){
+            if(c.getSubject().equals(certificate.getSubject()) || c.getEmail().equals(certificate.getEmail())){
+                provera = false;
+            }
+        }
+
+        if(certificate.getType().equals("Root")){
+            if(certificate.getAimroot().equals("Signing the certificate") || certificate.getAimroot().equals("Withdrawal of certificate") || certificate.getAimroot().equals("Signature and withdrawal") ){
+                provera = true;
+            }else{
+                provera = false;
+            }
+            if(!certificate.getIssuer().equals(certificate.getSubject())){
+                provera = false;
+            }
+        }
+
+
+
+        if(certificate.getEndDate().compareTo(certificate.getStartDate()) <= 0){
+            provera = false;
+        }
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        Date date =java.sql.Timestamp.valueOf(now);
+
+        if(certificate.getEndDate().compareTo(date) <= 0){
+            provera = false;
+        }
+
+        if(certificate.getType().equals("Intermediate") || certificate.getType().equals("End-entity")){
+            if(certificate.getAim()==null || certificate.getAim().equals("")){
+                provera = false;
+            }
+        }
+
+        Certificate issuer = certificateRepository.findByIssuer(certificate.getIssuer());
+        if(issuer!= null){
+            if(issuer.getEndDate().compareTo(certificate.getEndDate()) < 0 ){
+                provera = false;
+            }
+        }
+        return provera;
+    }
 
 }

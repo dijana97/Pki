@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import './Style.css';
 import {Card, Table, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faList, faEdit, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faList, faEdit, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {Link} from 'react-router-dom';
 import MyToast from './MyToast';
 import axios from 'axios';

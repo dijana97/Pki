@@ -5,6 +5,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSave, faPlusSquare, faUndo, faList, faEdit} from '@fortawesome/free-solid-svg-icons';
 import MyToast from './MyToast';
 import axios from 'axios';
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 export default class Certificate extends Component {
 
@@ -14,6 +17,7 @@ export default class Certificate extends Component {
         this.state = {
             genres: [],
             types : [],
+            aims:[],
             show : false
         };
         this.certificateChange = this.certificateChange.bind(this);
@@ -21,7 +25,7 @@ export default class Certificate extends Component {
     }
 
     initialState = {
-        id:'', subject:'', issuer:'',aim:'', startDate:'', endDate:'', name:'', surname:'',email:'',extension:'',type:'',withdrawn:''
+        id:'', subject:'', issuer:'',aim:'',aimroot:'', startDate:'', endDate:'', name:'', surname:'',email:'',extension:'',type:'',withdrawn:''
     };
 
     componentDidMount() {
@@ -30,6 +34,7 @@ export default class Certificate extends Component {
             this.findCertificateById(certificateId);
         }
         this.findAllTypes();
+        this.aimRoot();
     }
 
     findAllTypes = () => {
@@ -40,6 +45,19 @@ export default class Certificate extends Component {
                     types: [{value:'', display:'Select Certificate Type'}]
                         .concat(data.map(type => {
                             return {value:type, display:type}
+                        }))
+                });
+            });
+    };
+
+    aimRoot = () => {
+        axios.get("http://localhost:8081/rest/certificates/aimroot")
+            .then(response => response.data)
+            .then((data) => {
+                this.setState({
+                    aims: [{value:'', display:'Select Root Aim'}]
+                        .concat(data.map(aimroot => {
+                            return {value:aimroot, display:aimroot}
                         }))
                 });
             });
@@ -68,6 +86,7 @@ export default class Certificate extends Component {
                         subject: response.data.subject,
                         issuer: response.data.issuer,
                         aim: response.data.aim,
+                        aimroot: response.data.aimroot,
                         startDate: response.data.startDate,
                         endDate: response.data.endDate,
                         language: response.data.language,
@@ -98,6 +117,7 @@ export default class Certificate extends Component {
             subject: this.state.subject,
             issuer: this.state.issuer,
             aim: this.state.aim,
+            aimroot: this.state.aimroot,
             startDate: this.state.startDate,
             endDate: this.state.endDate,
             extension: this.state.extension,
@@ -132,6 +152,7 @@ export default class Certificate extends Component {
             subject: this.state.subject,
             issuer: this.state.issuer,
             aim: this.state.aim,
+            aimroot: this.state.aimroot,
             startDate: this.state.startDate,
             endDate: this.state.endDate,
             name: this.state.name,
@@ -166,10 +187,30 @@ export default class Certificate extends Component {
         return this.props.history.push("/list");
     };
 
-    render() {
-        const {subject, issuer,aim, startDate, endDate, name, surname, email,type,extension} = this.state;
 
+    state = {
+        startDate: new Date(),
+        endDate:new Date()
+    };
+
+    handleChange = date => {
+        this.setState({
+            startDate: date
+        });
+    };
+
+    handleChangeEnd = date => {
+        this.setState({
+            endDate: date
+        });
+    };
+
+    render() {
+        const {subject, issuer,aim,aimroot,startDate, endDate, name, surname, email,type,extension} = this.state;
         return (
+
+
+
             <div>
                 <div style={{"display":this.state.show ? "block" : "none"}}>
                     <MyToast show = {this.state.show} message = {this.state.method === "put" ? "Certificate Updated Successfully." : "Certificate Saved Successfully."} type = {"success"}/>
@@ -178,6 +219,7 @@ export default class Certificate extends Component {
                     <Card.Header>
                         <FontAwesomeIcon icon={this.state.id ? faEdit : faPlusSquare} /> {this.state.id ? "Update Certificate" : "Add New Certificate"}
                     </Card.Header>
+
                     <Form onReset={this.resetCerrtificate} onSubmit={this.state.id ? this.updateCertificate : this.submitCertificate} id="certificateFormId">
                         <Card.Body>
                             <Form.Row>
@@ -199,7 +241,7 @@ export default class Certificate extends Component {
                                 <Form.Group as={Col} controlId="formGridSubject">
                                     <Form.Label>Subject</Form.Label>
                                     <Form.Control required autoComplete="off"
-                                        type="test" name="subject"
+                                        type="text" name="subject"
                                         value={subject} onChange={this.certificateChange}
                                         className={"bg-dark text-white"}
                                         placeholder="Enter Certificate Subject" />
@@ -207,17 +249,33 @@ export default class Certificate extends Component {
                                 <Form.Group as={Col} controlId="formGridIssuer">
                                     <Form.Label>Issuer</Form.Label>
                                     <Form.Control required autoComplete="off"
-                                        type="test" name="issuer"
+                                        type="text" name="issuer"
                                         value={issuer} onChange={this.certificateChange}
                                         className={"bg-dark text-white"}
                                         placeholder="Enter Certificate Issuer" />
                                 </Form.Group>
                             </Form.Row>
                             <Form.Row>
+                                <Form.Group as={Col} controlId="formGridAimRoot">
+                                    <Form.Label>Aim-Root</Form.Label>
+                                    <Form.Control required as="select"
+                                                  custom onChange={this.certificateChange}
+                                                  name="aimroot" value={aimroot}
+                                                  className={"bg-dark text-white"}>
+                                        {this.state.aims.map(aimroot =>
+                                            <option key={aimroot.value} value={aimroot.value}>
+                                                {aimroot.display}
+                                            </option>
+                                        )}
+                                    </Form.Control>
+                                </Form.Group>
+
+                            </Form.Row>
+                            <Form.Row>
                                 <Form.Group as={Col} controlId="formGridAim">
                                     <Form.Label>Aim</Form.Label>
-                                    <Form.Control required autoComplete="off"
-                                                  type="test" name="aim"
+                                    <Form.Control autoComplete="off"
+                                                  type="text" name="aim"
                                                   value={aim} onChange={this.certificateChange}
                                                   className={"bg-dark text-white"}
                                                   placeholder="Enter Certificate Aim" />
@@ -226,27 +284,31 @@ export default class Certificate extends Component {
                             </Form.Row>
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridCoverStartDate">
-                                    <Form.Label>Start date</Form.Label>
-                                    <Form.Control required autoComplete="off"
-                                        type="test" name="startDate"
-                                        value={startDate} onChange={this.certificateChange}
-                                        className={"bg-dark text-white"}
-                                        placeholder="Enter Certifiate start date" />
+                                    <Form.Label>Start date  &nbsp;</Form.Label>
+                                    <DatePicker
+                                        selected={this.state.startDate}
+                                        onChange={this.handleChange}
+                                        name="startDate"
+                                        value={startDate}
+                                    />
+
+
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="formGridEndDate">
-                                    <Form.Label>End date</Form.Label>
-                                    <Form.Control required autoComplete="off"
-                                        type="test" name="endDate"
-                                        value={endDate} onChange={this.certificateChange}
-                                        className={"bg-dark text-white"}
-                                        placeholder="Enter Certificate ISBN Number" />
+                                    <Form.Label>End date  &nbsp;</Form.Label>
+                                    <DatePicker
+                                        selected={this.state.endDate}
+                                        onChange={this.handleChangeEnd}
+                                        name="endDate"
+                                        value={endDate}
+                                    />
                                 </Form.Group>
                             </Form.Row>
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridName">
                                     <Form.Label>Name</Form.Label>
                                     <Form.Control required autoComplete="off"
-                                        type="test" name="name"
+                                        type="text" name="name"
                                         value={name} onChange={this.certificateChange}
                                         className={"bg-dark text-white"}
                                         placeholder="Enter certificate name" />
@@ -254,7 +316,7 @@ export default class Certificate extends Component {
                                 <Form.Group as={Col} controlId="formGridSurname">
                                     <Form.Label>Surname</Form.Label>
                                     <Form.Control required autoComplete="off"
-                                                  type="test" name="surname"
+                                                  type="text" name="surname"
                                                   value={surname} onChange={this.certificateChange}
                                                   className={"bg-dark text-white"}
                                                   placeholder="Enter certificate surname" />
@@ -264,7 +326,7 @@ export default class Certificate extends Component {
                                 <Form.Group as={Col} controlId="formGridEmail">
                                     <Form.Label>Email</Form.Label>
                                     <Form.Control required autoComplete="off"
-                                                  type="test" name="email"
+                                                  type="email" name="email"
                                                   value={email} onChange={this.certificateChange}
                                                   className={"bg-dark text-white"}
                                                   placeholder="Enter certificate name" />

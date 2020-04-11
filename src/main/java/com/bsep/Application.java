@@ -23,8 +23,8 @@ public class Application implements CommandLineRunner {
 			Certificate certificate = new Certificate();
 			certificate.setSubject("Cert");
 			certificate.setEmail("cert@gmail.com");
-			certificate.setEndDate("12.12.2020.");
-			certificate.setStartDate("01.01.2020.");
+			//certificate.setEndDate("12.12.2020.");
+			//certificate.setStartDate("01.01.2020.");
 			certificate.setExtension("cdf");
 			certificate.setName("cc");
 			certificate.setAim("fefhei");
