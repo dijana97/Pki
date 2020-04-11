@@ -4,6 +4,7 @@ import com.bsep.resource.Resource;
 import com.bsep.domain.Certificate;
 import com.bsep.service.IService;
 import com.bsep.service.impl.CertificateService;
+import org.omg.CORBA.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,11 +52,14 @@ public class CertificateResourceImpl implements Resource<Certificate> {
 
     @Override
     public ResponseEntity<Certificate> save(Certificate certificate) {
+        if(certificateService.validation(certificate)) {
+            boolean retValue = certificateService.createRootCertificate(certificate, certificate.getType());
 
-        boolean retValue = certificateService.createRootCertificate(certificate, certificate.getType());
+            return new ResponseEntity<>(certificateIService.saveOrUpdate(certificate), HttpStatus.CREATED);
+        }
+        return  new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
 
-        return new ResponseEntity<>(certificateIService.saveOrUpdate(certificate), HttpStatus.CREATED);
-    }
+        }
 
     @Override
     public ResponseEntity<Certificate> update(Certificate book) {
@@ -70,6 +74,13 @@ public class CertificateResourceImpl implements Resource<Certificate> {
     @GetMapping("/type")
     public  ResponseEntity<Set<String>> findAllTypes() {
         return new ResponseEntity<>(new TreeSet<>(Arrays.asList("Root", "Intermediate", "End-entity")), HttpStatus.OK);
+    }
+
+    @GetMapping("/aimroot")
+    public  ResponseEntity<Set<String>> aimRoot() {
+        return new ResponseEntity<>(new TreeSet<>(Arrays.asList(
+                "Signing the certificate", "Withdrawal of certificate",
+                "Signature and withdrawal")), HttpStatus.OK);
     }
 
 }

@@ -13,4 +13,6 @@ public interface CertificateRepository extends PagingAndSortingRepository<Certif
 
     @Query("From Certificate c WHERE c.subject=:searchText OR c.aim=:searchText OR c.issuer=:searchText OR c.name=:searchText OR c.surname=:searchText")
     Page<Certificate> findAllCertificate(Pageable pageable, @Param("searchText") String searchText);
+
+    public Certificate findByIssuer(String data);
 }
