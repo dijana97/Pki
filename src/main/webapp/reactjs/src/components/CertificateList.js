@@ -10,6 +10,8 @@ import axios from 'axios';
 
 export default class CertificateList extends Component {
 
+
+
     constructor(props) {
         super(props);
         this.state = {
@@ -61,6 +63,26 @@ export default class CertificateList extends Component {
                 }
             });
     };
+
+    withdrawCertificate = (certificateId) => {
+        axios.withdraw("http://localhost:8081/rest/certificates/"+certificateId)
+            .then(response => {
+                if(response.data != null) {
+                    this.setState({"show":true});
+                    setTimeout(() => this.setState({"show":false}), 3000);
+                    this.setState({
+                        certificates: this.state.certificates.filter(certificate => certificate.id !== certificateId)
+                    });
+                } else {
+                    this.setState({"show":false});
+                }
+            });
+    };
+
+    withdraw(s) {
+        
+    }
+
 
     changePage = event => {
         let targetPage = parseInt(event.target.value);
@@ -185,6 +207,7 @@ export default class CertificateList extends Component {
                                     <th>Email</th>
                                     <th>Type</th>
                                     <th>Extension</th>
+                                    <th>Withdrawn</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -205,10 +228,11 @@ export default class CertificateList extends Component {
                                         <td>{certificate.email}</td>
                                         <td>{certificate.type}</td>
                                         <td>{certificate.extension}</td>
+                                        <td>{ String(certificate.withdrawn) }</td>
                                         <td>
                                             <ButtonGroup>
                                                 <Link to={"edit/"+certificate.id} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faEdit} /></Link>{' '}
-                                                <Button size="sm" variant="outline-danger" onClick={this.deleteCertificate.bind(this, certificate.id)}><FontAwesomeIcon icon={faTrash} /></Button>
+
                                             </ButtonGroup>
                                         </td>
                                     </tr>
