@@ -151,10 +151,24 @@ export default class CertificateList extends Component {
         this.findAllCertificates(this.state.currentPage);
     };
 
-
     findCertificateByIdDownload = (certificateId) => {
-        console.log('Click happened');
         axios.get("http://localhost:8081/rest/certificates/download/"+certificateId)
+            .then(response => {
+                if(response.data != null) {
+                   // this.setState({"show":true});
+                    //setTimeout(() => this.setState({"show":false}), 3000);
+                 //   this.setState({
+                   //     certificates: this.state.certificates.filter(certificate => certificate.id !== certificateId)
+                    //});
+                } else {
+                   // this.setState({"show":false});
+                }
+            });
+    };
+
+  /*  findCertificateByIdDownload = (certificateId) => {
+        console.log('Click happened');
+        axios.get("http://localhost:8081/rest/certificates/"+certificateId)
             .then(response => {
                 if(response.data != null)
                 {
@@ -179,7 +193,7 @@ export default class CertificateList extends Component {
             }).catch((error) => {
                 console.error("Error - "+error);
             });
-        };
+        };*/
 
     searchData = (currentPage) => {
         currentPage -= 1;
@@ -263,7 +277,7 @@ export default class CertificateList extends Component {
                                         <td>
                                             <ButtonGroup>
                                                 <Link to={"edit/"+certificate.id} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faEdit} /></Link>{' '}
-                                                <Link  onClick={this.findCertificateByIdDownload} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faDownload} /></Link>{' '}
+                                                <Link onClick={this.findCertificateByIdDownload.bind(this, certificate.id)} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faDownload} /></Link>{' '}
 
                                             </ButtonGroup>
                                         </td>

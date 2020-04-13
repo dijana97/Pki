@@ -100,42 +100,44 @@ public class CertificateService {
                 CertificateGenerator certGenerator = new CertificateGenerator();
                 X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
 
-                String keyStoreFile = "cert.jks";
+                String keyStoreFile = "rootint.jks";
                 KeyStoreWriter kw = new KeyStoreWriter();
                 kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
-                kw.write(subjectData.getSerialNumber(), selfKey.getPrivate(), "bsep20".toCharArray(), certX509);
+
+                kw.write(subjectData.getSerialNumber(), selfKey.getPrivate(), "bsep20".toCharArray(), new java.security.cert.Certificate[]{certX509});
+                System.out.println("Korenski sertifikat "+ certX509.getSerialNumber());
                 kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
                 return true;
             } else if (type.equals("Intermediate")) {
 
                 Certificate cer = certificateRepository.save(certificate);
-                IssuerData issuerData = keyStoreReader.readIssuerFromStore("cert.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
+                IssuerData issuerData = keyStoreReader.readIssuerFromStore("rootint.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
                 KeyPair subjectKey = getKeyPair();
                 SubjectData subjectData = getSubjectData(cer, subjectKey.getPublic());
                 CertificateGenerator certGenerator = new CertificateGenerator();
                 X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
                 String keyStoreFile = "";
-                keyStoreFile = "cert.jks";
+                keyStoreFile = "rootint.jks";
 
                 KeyStoreWriter kw = new KeyStoreWriter();
                 kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
-                kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(), certX509);
+                kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(),  new java.security.cert.Certificate[]{certX509});
                 kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
                 return true;
             } else if (type.equals("End-entity")) {
 
                 Certificate cer = certificateRepository.save(certificate);
-                IssuerData issuerData = keyStoreReader.readIssuerFromStore("cert.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
+                IssuerData issuerData = keyStoreReader.readIssuerFromStore("rootint.jks", certificate.getIssuer(), "bsep20".toCharArray(), "bsep20".toCharArray());
                 KeyPair subjectKey = getKeyPair();
                 SubjectData subjectData = getSubjectData(cer, subjectKey.getPublic());
                 CertificateGenerator certGenerator = new CertificateGenerator();
                 X509Certificate certX509 = certGenerator.generateCertificate(subjectData, issuerData);
                 String keyStoreFile = "";
-                keyStoreFile = "endentity.jks";
+                keyStoreFile = "end2.jks";
 
                 KeyStoreWriter kw = new KeyStoreWriter();
                 kw.loadKeyStore(keyStoreFile, "bsep20".toCharArray());
-                kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(), certX509);
+                kw.write(subjectData.getSerialNumber(), subjectKey.getPrivate(), "bsep20".toCharArray(), new java.security.cert.Certificate[]{certX509});
                 kw.saveKeyStore(keyStoreFile, "bsep20".toCharArray());
                 return true;
             } else {
@@ -200,8 +202,16 @@ public class CertificateService {
 
     public File downloadCertificate(Long id) {
         Certificate certificate = certificateIService.findById(id);
+        System.out.println("Certificate from repository" + certificate.getSubject());
         java.security.cert.Certificate c = findFromKeystore(certificate.getSubject(),certificate.getType());
+       if(c==null){
+           System.out.println("Keystore is null");
+       }else{
+           System.out.println("Keystore is not null");
+       }
+
         File file  = writeToFile(c);
+
         try {
             FileInputStream inStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
@@ -212,12 +222,16 @@ public class CertificateService {
 
     private java.security.cert.Certificate findFromKeystore(String subjectNum, String type) {
 
-        String keyStoreFile = type.equals("End-entity") ? "endentity.jks" : "cert.jks" ;
+        String keyStoreFile = type.equals("End-entity") ? "end2.jks" : "rootint.jks" ;
+        System.out.println("Sta je prosledjeno kao tip "+ type);
+        System.out.println("Sta je keystore fajl "+ keyStoreFile);
         return keyStoreReader.readCertificate(keyStoreFile, "bsep20", subjectNum);
     }
 
     private File writeToFile(java.security.cert.Certificate cert) {
-        File file = new File("certificate.cer");
+        File file = new File("server.cer");
+        System.out.println("File" + file.getName());
+        System.out.println("Cert "+ cert.getPublicKey()+ " "+ cert.getType());
         FileOutputStream os = null;
         byte[] buf = new byte[0];
         System.out.println(cert+ "    Cert print ");

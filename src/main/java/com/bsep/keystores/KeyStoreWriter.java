@@ -43,6 +43,7 @@ public class KeyStoreWriter {
         try {
 
             if (fileName != null) {
+                System.out.println("File name "+fileName + " password " + password);
                 keyStore.load(new FileInputStream(Paths.get(ResourceUtils.getFile("classpath:") + "\\..\\..\\src\\main\\resources").toRealPath().toString() + "\\" + fileName), password);
             } else {
                 keyStore.load(null, password);
@@ -75,9 +76,9 @@ public class KeyStoreWriter {
         }
     }
 
-    public void write(String alias, PrivateKey privateKey, char[] password, Certificate certificate) {
+    public void write(String alias, PrivateKey privateKey, char[] password, Certificate[] certificate) {
         try {
-            keyStore.setKeyEntry(alias, privateKey, password, new Certificate[] {certificate});
+            keyStore.setKeyEntry(alias, privateKey, password,  certificate);
         } catch (KeyStoreException e) {
             e.printStackTrace();
         }
