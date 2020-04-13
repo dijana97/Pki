@@ -25,6 +25,7 @@ export default function App() {
                         <Route path="/" exact component={() => <Welcome heading={heading}/>}/>
                         <Route path="/add" exact component={Certificate}/>
                         <Route path="/edit/:id" exact component={Certificate}/>
+                        <Route path="/download/:id" exact component={CertificateList}/>
                         <Route path="/list" exact component={CertificateList}/>
                         <Route path="/users" exact component={UserList}/>
                     </Switch>

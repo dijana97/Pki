@@ -12,11 +12,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -221,6 +225,25 @@ public class CertificateResourceImpl implements Resource<Certificate> {
         }
 
         return new ResponseEntity<>(new TreeSet<>(a), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/download/{id}")
+    public void download(HttpServletRequest request, HttpServletResponse response, @PathVariable Long id){
+        System.out.println("id cert je:  " + id);
+        File downloadCer = certificateService.downloadCertificate(id);
+        response.setContentType("application/pkix-cert");
+        response.setContentLength((int) downloadCer.length());
+        response.addHeader("Content-Disposition", "attachment; filename="+ downloadCer.getName());
+
+        try {
+            Files.copy(Paths.get(downloadCer.getPath()), response.getOutputStream() );
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

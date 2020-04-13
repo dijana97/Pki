@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import './Style.css';
 import {Card, Table, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faList, faEdit, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faList,faDownload, faEdit, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {Link} from 'react-router-dom';
 import MyToast from './MyToast';
 import axios from 'axios';
@@ -151,6 +151,36 @@ export default class CertificateList extends Component {
         this.findAllCertificates(this.state.currentPage);
     };
 
+
+    findCertificateByIdDownload = (certificateId) => {
+        console.log('Click happened');
+        axios.get("http://localhost:8081/rest/certificates/download/"+certificateId)
+            .then(response => {
+                if(response.data != null)
+                {
+                    this.setState({
+                        id: response.data.id,
+                        subject: this.state.subject,
+                        issuer: this.state.issuer,
+                        aim: this.state.aim,
+                        aimroot: this.state.aimroot,
+                        startDate: this.state.startDate,
+                        endDate: this.state.endDate,
+                        name: this.state.name,
+                        surname: this.state.surname,
+                        email: this.state.email,
+                        type: this.state.type,
+                        extension: this.state.extension,
+                        withdrawn: this.refs.check_me.checked
+
+                    });
+
+                }
+            }).catch((error) => {
+                console.error("Error - "+error);
+            });
+        };
+
     searchData = (currentPage) => {
         currentPage -= 1;
         axios.get("http://localhost:8081/rest/certificates/search/"+this.state.search+"?page="+currentPage+"&size="+this.state.certificatesPerPage)
@@ -233,6 +263,7 @@ export default class CertificateList extends Component {
                                         <td>
                                             <ButtonGroup>
                                                 <Link to={"edit/"+certificate.id} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faEdit} /></Link>{' '}
+                                                <Link  onClick={this.findCertificateByIdDownload} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faDownload} /></Link>{' '}
 
                                             </ButtonGroup>
                                         </td>

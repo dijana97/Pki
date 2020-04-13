@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
-
+import Decoder.BASE64Encoder;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.springframework.stereotype.Service;
+import java.util.Base64;
+
 
 @Service
 public class CertificateService {
@@ -187,7 +189,7 @@ public class CertificateService {
             }
         }
 
-     /*   Certificate issuer = certificateRepository.findByIssuer(certificate.getIssuer());
+      /* Certificate issuer = certificateRepository.findByIssuer(certificate.getIssuer());
         if(issuer!= null){
             if(issuer.getEndDate().compareTo(certificate.getEndDate()) < 0 ){
                 provera = false;
@@ -195,5 +197,49 @@ public class CertificateService {
         }*/
         return provera;
     }
+
+    public File downloadCertificate(Long id) {
+        Certificate certificate = certificateIService.findById(id);
+        java.security.cert.Certificate c = findFromKeystore(certificate.getSubject(),certificate.getType());
+        File file  = writeToFile(c);
+        try {
+            FileInputStream inStream = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+    private java.security.cert.Certificate findFromKeystore(String subjectNum, String type) {
+
+        String keyStoreFile = type.equals("End-entity") ? "endentity.jks" : "cert.jks" ;
+        return keyStoreReader.readCertificate(keyStoreFile, "bsep20", subjectNum);
+    }
+
+    private File writeToFile(java.security.cert.Certificate cert) {
+        File file = new File("certificate.cer");
+        FileOutputStream os = null;
+        byte[] buf = new byte[0];
+        System.out.println(cert+ "    Cert print ");
+        try {
+            buf = cert.getEncoded();
+            os = new FileOutputStream(file);
+            os.write(buf);
+            Writer wr = new OutputStreamWriter(os, Charset.forName("UTF-8"));
+            wr.write(new BASE64Encoder().encode(buf));
+            wr.flush();
+            os.close();
+        } catch (CertificateEncodingException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return file;
+    }
+
+
 
 }
