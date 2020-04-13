@@ -25,7 +25,7 @@ public class Application implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 			Certificate certificate = new Certificate();
-			certificate.setSubject("1234");
+			certificate.setSubject("123456789");
 			certificate.setEmail("cert@gmail.com");
 			DateFormat start = new SimpleDateFormat(
 				"EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
@@ -40,7 +40,7 @@ public class Application implements CommandLineRunner {
 			certificate.setAim("fefhei");
 			certificate.setSurname("rrr");
 			certificate.setRevoked("false");
-			certificate.setIssuer("1234");
+			certificate.setIssuer("123456789");
 			certificate.setType("root");
 			certificate.setWithdrawn(false);
 			service.saveOrUpdate(certificate);

@@ -84,14 +84,23 @@ public class KeyStoreReader {
      */
     public Certificate readCertificate(String keyStoreFile, String keyStorePass, String alias) {
         try {
+            System.out.println("Prosledjen keystore fajl "+ keyStoreFile);
+            System.out.println("Prosledjen keyStorePass "+ keyStorePass);
+            System.out.println("Prosledjen alias "+ alias);
             //kreiramo instancu KeyStore
+
             KeyStore ks = KeyStore.getInstance("JKS", "SUN");
+            System.out.println("Posle ks get instance");
             //ucitavamo podatke
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(Paths.get(ResourceUtils.getFile("classpath:") + "\\..\\..\\src\\main\\resources").toRealPath().toString() + "\\" + keyStoreFile));
+            System.out.println("Posle buffered reader");
             ks.load(in, keyStorePass.toCharArray());
-
+            System.out.println("Posle ks load-a");
+            System.out.println("Sta je ks " + ks.getType());
             if (ks.isKeyEntry(alias)) {
+                System.out.println("Udjes li u if?");
                 Certificate cert = ks.getCertificate(alias);
+                System.out.println("Sta vracas iz key store reader-a?");
                 return cert;
             }
         } catch (KeyStoreException e) {
