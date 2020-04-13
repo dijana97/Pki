@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
+
 export default class Certificate extends Component {
 
     constructor(props) {
@@ -33,6 +34,7 @@ export default class Certificate extends Component {
         const certificateId = +this.props.match.params.id;
         if(certificateId) {
             this.findCertificateById(certificateId);
+            this.findCertificateByIdDownload(certificateId);
         }
         this.findAllTypes();
         this.aimRoot();
@@ -92,19 +94,21 @@ export default class Certificate extends Component {
     };
 
 
+
     findCertificateById = (certificateId) => {
         axios.get("http://localhost:8081/rest/certificates/"+certificateId)
             .then(response => {
-                if(response.data != null) {
+                if(response.data != null)
 
+                {
                     this.setState({
                         id: response.data.id,
                         subject: response.data.subject,
                         issuer: response.data.issuer,
                         aim: response.data.aim,
                         aimroot: response.data.aimroot,
-                        startDate: response.data.startDate,
-                        endDate: response.data.endDate,
+                        startDate: new Date(response.data.startDate),
+                        endDate: new Date(response.data.endDate),
                         name: response.data.name,
                         surname: response.data.surname,
                         email: response.data.email,
@@ -113,6 +117,7 @@ export default class Certificate extends Component {
                         withdrawn:response.data.withdrawn
 
                     });
+
                 }
             }).catch((error) => {
                 console.error("Error - "+error);
@@ -192,6 +197,9 @@ export default class Certificate extends Component {
 
         this.setState(this.initialState);
     };
+
+
+
 
     certificateChange = event => {
         this.setState({
