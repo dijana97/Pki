@@ -7,6 +7,7 @@ import {faList, faEdit, faStepBackward, faFastBackward, faStepForward, faFastFor
 import {Link} from 'react-router-dom';
 import MyToast from './MyToast';
 import axios from 'axios';
+import moment from 'moment'
 
 export default class CertificateList extends Component {
 
@@ -194,7 +195,7 @@ export default class CertificateList extends Component {
                         </div>
                     </Card.Header>
                     <Card.Body>
-                        <Table bordered hover striped variant="dark">
+                        <Table bordered hover striped variant="dark" >
                             <thead>
                                 <tr>
                                     <th>Subject</th>
@@ -210,7 +211,7 @@ export default class CertificateList extends Component {
                                     <th>Withdrawn</th>
                                 </tr>
                               </thead>
-                              <tbody>
+                              <tbody >
                                 {
                                     certificates.length === 0 ?
                                     <tr align="center">
@@ -221,8 +222,8 @@ export default class CertificateList extends Component {
                                         <td>{certificate.subject}</td>
                                         <td>{certificate.issuer}</td>
                                         <td>{certificate.aim}</td>
-                                        <td>{certificate.startDate}</td>
-                                        <td>{certificate.endDate}</td>
+                                        <td>{moment(certificate.startDate).format('DD/MM/YYYY')}</td>
+                                        <td>{moment(certificate.endDate).format('DD/MM/YYYY')}</td>
                                         <td>{certificate.name}</td>
                                         <td>{certificate.surname}</td>
                                         <td>{certificate.email}</td>

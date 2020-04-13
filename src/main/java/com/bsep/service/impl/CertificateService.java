@@ -86,7 +86,8 @@ public class CertificateService {
                 Certificate cer = certificateRepository.save(certificate);
                 KeyPair selfKey = getKeyPair();
                 SubjectData subjectData = getSubjectData(cer, selfKey.getPublic());
-
+                System.out.println(certificate.getStartDate());
+                System.out.println(certificate.getStartDate());
                 X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
                 builder.addRDN(BCStyle.CN, certificate.getName() + " " + certificate.getSurname());
                 builder.addRDN(BCStyle.SURNAME, certificate.getName());
@@ -186,12 +187,12 @@ public class CertificateService {
             }
         }
 
-        Certificate issuer = certificateRepository.findByIssuer(certificate.getIssuer());
+     /*   Certificate issuer = certificateRepository.findByIssuer(certificate.getIssuer());
         if(issuer!= null){
             if(issuer.getEndDate().compareTo(certificate.getEndDate()) < 0 ){
                 provera = false;
             }
-        }
+        }*/
         return provera;
     }
 

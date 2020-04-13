@@ -18,6 +18,7 @@ export default class Certificate extends Component {
             genres: [],
             types : [],
             aims:[],
+            issuers:[],
             show : false
         };
         this.certificateChange = this.certificateChange.bind(this);
@@ -35,6 +36,7 @@ export default class Certificate extends Component {
         }
         this.findAllTypes();
         this.aimRoot();
+        this.issuers();
     }
 
     findAllTypes = () => {
@@ -63,6 +65,19 @@ export default class Certificate extends Component {
             });
     };
 
+    issuers = () => {
+        axios.get("http://localhost:8081/rest/certificates/issuers")
+            .then(response => response.data)
+            .then((data) => {
+                this.setState({
+                    issuers: [{value:'', display:'Select issuer'}]
+                        .concat(data.map(issuer => {
+                            return {value:issuer, display:issuer}
+                        }))
+                });
+            });
+    };
+
     findAllGenres = () => {
         axios.get("http://localhost:8081/rest/certificates/genres")
             .then(response => response.data)
@@ -81,6 +96,7 @@ export default class Certificate extends Component {
         axios.get("http://localhost:8081/rest/certificates/"+certificateId)
             .then(response => {
                 if(response.data != null) {
+
                     this.setState({
                         id: response.data.id,
                         subject: response.data.subject,
@@ -89,7 +105,6 @@ export default class Certificate extends Component {
                         aimroot: response.data.aimroot,
                         startDate: response.data.startDate,
                         endDate: response.data.endDate,
-                        language: response.data.language,
                         name: response.data.name,
                         surname: response.data.surname,
                         email: response.data.email,
@@ -142,6 +157,7 @@ export default class Certificate extends Component {
             });
 
         this.setState(this.initialState);
+        console.log(this.state.startDate);
     };
 
     updateCertificate = event => {
@@ -248,11 +264,17 @@ export default class Certificate extends Component {
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="formGridIssuer">
                                     <Form.Label>Issuer</Form.Label>
-                                    <Form.Control required autoComplete="off"
-                                        type="text" name="issuer"
-                                        value={issuer} onChange={this.certificateChange}
-                                        className={"bg-dark text-white"}
-                                        placeholder="Enter Certificate Issuer" />
+
+                                    <Form.Control required as="select"
+                                                  custom onChange={this.certificateChange}
+                                                  name="issuer" value={issuer}
+                                                  className={"bg-dark text-white"}>
+                                        {this.state.issuers.map(issuer =>
+                                            <option key={issuer.value} value={issuer.value}>
+                                                {issuer.display}
+                                            </option>
+                                        )}
+                                    </Form.Control>
                                 </Form.Group>
                             </Form.Row>
                             <Form.Row>
@@ -290,6 +312,7 @@ export default class Certificate extends Component {
                                         onChange={this.handleChange}
                                         name="startDate"
                                         value={startDate}
+
                                     />
 
 
