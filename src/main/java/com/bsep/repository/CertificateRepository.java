@@ -8,6 +8,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CertificateRepository extends PagingAndSortingRepository<Certificate, Long> {
 
@@ -15,4 +17,6 @@ public interface CertificateRepository extends PagingAndSortingRepository<Certif
     Page<Certificate> findAllCertificate(Pageable pageable, @Param("searchText") String searchText);
 
     public Certificate findByIssuer(String data);
+
+    public List<Certificate> findAll();
 }

@@ -27,3 +27,7 @@
 .arrow-down {
     border-top : 10px solid white;
 }
+
+table{
+    table-layout:fixed;
+}

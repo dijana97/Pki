@@ -7,6 +7,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
@@ -19,22 +24,27 @@ public class Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		for(int i=1; i<=3; i++) {
 			Certificate certificate = new Certificate();
-			certificate.setSubject("Cert");
+			certificate.setSubject("1234");
 			certificate.setEmail("cert@gmail.com");
-			//certificate.setEndDate("12.12.2020.");
-			//certificate.setStartDate("01.01.2020.");
+			DateFormat start = new SimpleDateFormat(
+				"EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+		DateFormat end = new SimpleDateFormat(
+				"EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+			start.parse("Sun Apr 12 00:00:00 CEST 2020");
+			end.parse("Sat Dec 12 00:00:00 CEST 2020");
+			certificate.setEndDate(start.parse("Sun Apr 12 00:00:00 CEST 2020"));
+			certificate.setStartDate(end.parse("Sat Dec 12 00:00:00 CEST 2020"));
 			certificate.setExtension("cdf");
 			certificate.setName("cc");
 			certificate.setAim("fefhei");
 			certificate.setSurname("rrr");
 			certificate.setRevoked("false");
-			certificate.setIssuer("mali");
+			certificate.setIssuer("1234");
 			certificate.setType("root");
 			certificate.setWithdrawn(false);
 			service.saveOrUpdate(certificate);
-		}
+
 	}
 
 }
