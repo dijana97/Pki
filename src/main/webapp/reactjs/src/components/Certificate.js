@@ -34,7 +34,7 @@ export default class Certificate extends Component {
         const certificateId = +this.props.match.params.id;
         if(certificateId) {
             this.findCertificateById(certificateId);
-            this.findCertificateByIdDownload(certificateId);
+
         }
         this.findAllTypes();
         this.aimRoot();
@@ -288,7 +288,7 @@ export default class Certificate extends Component {
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridAimRoot">
                                     <Form.Label>Aim-Root</Form.Label>
-                                    <Form.Control required as="select"
+                                    <Form.Control  as="select"
                                                   custom onChange={this.certificateChange}
                                                   name="aimroot" value={aimroot}
                                                   className={"bg-dark text-white"}>

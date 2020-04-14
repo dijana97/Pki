@@ -41,7 +41,7 @@ public class Application implements CommandLineRunner {
 			certificate.setSurname("rrr");
 			certificate.setRevoked("false");
 			certificate.setIssuer("123456789");
-			certificate.setType("root");
+			certificate.setType("Root");
 			certificate.setWithdrawn(false);
 			service.saveOrUpdate(certificate);
 

@@ -217,16 +217,48 @@ public class CertificateResourceImpl implements Resource<Certificate> {
         ArrayList<String> a=new ArrayList<String>();
 
         for(int i=0; i<nova.size(); i++){
-            System.out.println("dfkjslkdjf"+ nova.get(0).getIssuer());
-            if(nova.get(i).isWithdrawn()==false){
-                padajuca.add(nova.get(i).getIssuer());
-                a.add(nova.get(i).getIssuer());
+
+            Boolean valid=validiranje(nova.get(i));
+
+
+            if(nova.get(i).getType().equals("Intermediate") || nova.get(i).getType().equals("Root")){
+             //   if(a.contains(nova.get(i).getSubject())) {
+
+                    if (nova.get(i).getType().equals("Root") && nova.get(i).isWithdrawn() == false) {
+                        padajuca.add(nova.get(i).getSubject());
+                        a.add(nova.get(i).getSubject());
+                    }else if(nova.get(i).getType().equals("Intermediate") && valid==true && nova.get(i).isWithdrawn() == false){
+                        padajuca.add(nova.get(i).getSubject());
+                        a.add(nova.get(i).getSubject());
+               // }
+                    }
             }
-        }
+
+            }
 
         return new ResponseEntity<>(new TreeSet<>(a), HttpStatus.OK);
     }
 
+
+    public Boolean validiranje(Certificate c){
+
+        Boolean revoked=null;
+        if(c.getType().equals("Intermediate")){
+            Certificate cc=certificateRepsoitory.findBySubject(c.getIssuer());
+            System.out.println("Validiranje " + cc.getSubject());
+            System.out.println("Povucen " + cc.isWithdrawn());
+            if(cc.isWithdrawn()==true){
+                revoked= false;
+            }else {
+                if (cc.getType().equals("Intermediate")) {
+                    Certificate ccc = certificateRepsoitory.findBySubject(cc.getIssuer());
+                    validiranje(ccc);
+                }
+                revoked = true;
+            }
+        }
+        return revoked;
+    }
 
     @GetMapping("/download/{id}")
     public void download(HttpServletRequest request, HttpServletResponse response, @PathVariable Long id){
