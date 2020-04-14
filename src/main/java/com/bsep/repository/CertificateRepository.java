@@ -18,5 +18,7 @@ public interface CertificateRepository extends PagingAndSortingRepository<Certif
 
     public Certificate findByIssuer(String data);
 
+    public Certificate findBySubject(String data);
+
     public List<Certificate> findAll();
 }
