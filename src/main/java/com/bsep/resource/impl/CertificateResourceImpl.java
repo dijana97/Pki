@@ -1,5 +1,6 @@
 package com.bsep.resource.impl;
 
+import com.bsep.domain.Admin;
 import com.bsep.repository.CertificateRepository;
 import com.bsep.resource.Resource;
 import com.bsep.domain.Certificate;
@@ -90,6 +91,12 @@ public class CertificateResourceImpl implements Resource<Certificate> {
         return new ResponseEntity<>(new TreeSet<>(Arrays.asList(
                 "Signing the certificate", "Withdrawal of certificate",
                 "Signature and withdrawal")), HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    Admin admin(@RequestBody Admin admin) {
+        System.out.println("username je : " + admin.getUsername());
+        return admin;
     }
 
     @GetMapping("/issuers")
