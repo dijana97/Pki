@@ -9,7 +9,7 @@ import Welcome from './components/Welcome';
 import Certificate from './components/Certificate';
 import CertificateList from './components/CertificateList';
 import UserList from './components/UserList';
-import LoginForm from './components/LoginForm';
+import LoginForm2 from './components/LoginForm2';
 
 
 export default function App() {
@@ -29,7 +29,7 @@ export default function App() {
                         <Route path="/download/:id" exact component={CertificateList}/>
                         <Route path="/list" exact component={CertificateList}/>
                         <Route path="/users" exact component={UserList}/>
-                        <Route path="/login" exact component={LoginForm}/>
+                        <Route path="/login-url" exact component={LoginForm2}/>
                     </Switch>
                 </Col>
             </Row>
