@@ -248,6 +248,7 @@ public class CertificateResourceImpl implements Resource<Certificate> {
             System.out.println("Validiranje " + cc.getSubject());
             System.out.println("Povucen " + cc.isWithdrawn());
             if(cc.isWithdrawn()==true){
+                c.setWithdrawn(true);
                 revoked= false;
             }else {
                 if (cc.getType().equals("Intermediate")) {
