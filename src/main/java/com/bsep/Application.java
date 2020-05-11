@@ -33,8 +33,8 @@ public class Application implements CommandLineRunner {
 				"EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
 			start.parse("Sun Apr 12 00:00:00 CEST 2020");
 			end.parse("Sat Dec 12 00:00:00 CEST 2020");
-			certificate.setEndDate(start.parse("Sun Apr 12 00:00:00 CEST 2020"));
-			certificate.setStartDate(end.parse("Sat Dec 12 00:00:00 CEST 2020"));
+			certificate.setEndDate(start.parse("Sat Dec 12 00:00:00 CEST 2020"));
+			certificate.setStartDate(end.parse("Sun Apr 12 00:00:00 CEST 2020"));
 			certificate.setExtension("cdf");
 			certificate.setName("cc");
 			certificate.setAim("fefhei");
