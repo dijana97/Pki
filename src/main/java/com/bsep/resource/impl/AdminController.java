@@ -2,6 +2,7 @@ package com.bsep.resource.impl;
 
 import com.bsep.domain.Admin;
 import com.bsep.domain.Certificate;
+import com.bsep.domain.LoginViewModel;
 import com.bsep.repository.AdminRepository;
 import com.bsep.repository.CertificateRepository;
 import com.bsep.resource.Resource;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -44,18 +46,16 @@ public class AdminController {
         this.adminRepository = groupRepository;
     }
 
-    //Ovo nam ni ne treva jer nam to odradi spring security sam
-
-    @PostMapping(value = "/logindata", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Admin> createGroup(@RequestBody Admin admin, HttpServletResponse response) throws URISyntaxException {
+    @PostMapping(value = "/logindata", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<LoginViewModel> login(@RequestBody LoginViewModel admin, HttpServletResponse response) throws AuthenticationException, IOException {
 
         Admin log = loginService.loginUser(admin.getUsername(), admin.getPassword());
-        System.out.println("LOGUJEM SEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe\n\n");
+        System.out.println("LOGUJEM SE" + admin.getUsername() +admin.getPassword());
         if (log != null) {
 
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return (ResponseEntity<Admin>) ResponseEntity.ok();
+        return  new ResponseEntity<>(HttpStatus.OK);
     }
 }

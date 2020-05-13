@@ -32,7 +32,7 @@ public class AdminService implements CommandLineRunner{
 
         Admin admin1 = new Admin("admin1",passwordEncoder.encode("admin111"),"ADMIN","");
         Admin admin2 = new Admin("admin2",passwordEncoder.encode("admin222"),"ADMIN","");
-
+        
         List<Admin> admins = Arrays.asList(admin1,admin2);
 
         this.adminRepository.saveAll(admins);

@@ -26,21 +26,18 @@ export default class LoginForm2 extends Component{
         const name = target.name;
         let item = {...this.state.item};
         item[name] = value;
+       
         this.setState({item});
     }
 
          handleSubmit(event) {
              event.preventDefault();
+             const {item} = this.state;
 
-            let data={
-                "username":this.state.username,
-                "password":this.state.password
-            }
-
+             console.log("Sta je data "+ item.password+item.username);
              axios( {
                  method: 'POST',
                  url:'http://localhost:8081/rest/login/logindata',
-                 data:data,
                 contentType:'application/json'
              }).then((response)=>{
                  if(response===200){
