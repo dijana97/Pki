@@ -7,11 +7,13 @@ import com.bsep.repository.CertificateRepository;
 import com.bsep.resource.Resource;
 import com.bsep.service.IService;
 import com.bsep.service.impl.CertificateService;
+import com.bsep.service.impl.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +35,10 @@ import java.util.*;
 @CrossOrigin(origins="http://localhost:3000")
 public class AdminController {
 
-    private  AdminRepository adminRepository;
+    @Autowired
+    private LoginService loginService;
+
+    private AdminRepository adminRepository;
 
     public AdminController(AdminRepository groupRepository) {
         this.adminRepository = groupRepository;
@@ -41,13 +46,16 @@ public class AdminController {
 
     //Ovo nam ni ne treva jer nam to odradi spring security sam
 
-    /*@PostMapping("/loginData")
-    ResponseEntity<Admin> createGroup(@Valid @RequestBody Admin group) throws URISyntaxException {
-      System.out.println("caoooooooooo");
-        Admin result = adminRepository.save(group);
-        return ResponseEntity.created(new URI("/api/group/" + result.getId()))
-                .body(result);
-    }*/
+    @PostMapping(value = "/logindata", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Admin> createGroup(@RequestBody Admin admin, HttpServletResponse response) throws URISyntaxException {
 
+        Admin log = loginService.loginUser(admin.getUsername(), admin.getPassword());
+        System.out.println("LOGUJEM SEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe\n\n");
+        if (log != null) {
 
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return (ResponseEntity<Admin>) ResponseEntity.ok();
+    }
 }

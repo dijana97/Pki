@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import {Card} from "react-bootstrap";
-
+import axios from 'axios';
 
 export default class LoginForm2 extends Component{
 
@@ -19,6 +19,7 @@ export default class LoginForm2 extends Component{
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+
     handleChange(event) {
         const target = event.target;
         const value = target.value;
@@ -28,20 +29,27 @@ export default class LoginForm2 extends Component{
         this.setState({item});
     }
 
-    async handleSubmit(event) {
-        event.preventDefault();
-        const {item} = this.state;
+         handleSubmit(event) {
+             event.preventDefault();
 
-        await fetch('http://localhost:8081/rest/login', {
-            method: (item.id) ? 'PUT' : 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item),
-        });
-        this.props.history.push('/login-url');
-    }
+            let data={
+                "username":this.state.username,
+                "password":this.state.password
+            }
+
+             axios( {
+                 method: 'POST',
+                 url:'http://localhost:8081/rest/login/logindata',
+                 data:data,
+                contentType:'application/json'
+             }).then((response)=>{
+                 if(response===200){
+                     this.props.history.push('list');
+                 }
+             })
+             this.props.history.push('list');
+         }
+
 
     render() {
         const {item} = this.state;

@@ -41,6 +41,11 @@ public class CertificateResourceImpl implements Resource<Certificate> {
     @Autowired
     private CertificateService certificateService;
 
+    @RequestMapping("/dashboard")
+    public String firstPage() {
+        return "success";
+    }
+
     @Override
     public ResponseEntity<Page<Certificate>> findAll(Pageable pageable, String searchText) {
         return new ResponseEntity<>(certificateIService.findAll(pageable, searchText), HttpStatus.OK);
