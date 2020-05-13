@@ -31,21 +31,23 @@ import java.util.*;
 @RestController
 @RequestMapping("/login")
 @CrossOrigin(origins="http://localhost:3000")
-public class AdminContoller {
+public class AdminController {
 
     private  AdminRepository adminRepository;
 
-    public AdminContoller(AdminRepository groupRepository) {
+    public AdminController(AdminRepository groupRepository) {
         this.adminRepository = groupRepository;
     }
 
-    @PostMapping("/loginData")
+    //Ovo nam ni ne treva jer nam to odradi spring security sam
+
+    /*@PostMapping("/loginData")
     ResponseEntity<Admin> createGroup(@Valid @RequestBody Admin group) throws URISyntaxException {
       System.out.println("caoooooooooo");
         Admin result = adminRepository.save(group);
         return ResponseEntity.created(new URI("/api/group/" + result.getId()))
                 .body(result);
-    }
+    }*/
 
 
 }
