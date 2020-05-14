@@ -11,7 +11,6 @@ import CertificateList from './components/CertificateList';
 import UserList from './components/UserList';
 import LoginForm2 from './components/LoginForm2';
 
-
 export default function App() {
 
   const heading = "Public key infrastructure";
@@ -29,7 +28,8 @@ export default function App() {
                         <Route path="/download/:id" exact component={CertificateList}/>
                         <Route path="/list" exact component={CertificateList}/>
                         <Route path="/users" exact component={UserList}/>
-                        <Route path="/login-url" exact component={LoginForm2}/>
+                       <Route path="/login-url" exact component={LoginForm2}/>
+
                     </Switch>
                 </Col>
             </Row>

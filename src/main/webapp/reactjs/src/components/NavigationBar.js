@@ -3,7 +3,9 @@ import React from 'react';
 import {Navbar, Nav} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 
+
 export default function NavigationBar() {
+
     return (
         <Navbar bg="dark" variant="dark">
             <Link to={""} className="navbar-brand">
@@ -12,7 +14,10 @@ export default function NavigationBar() {
             <Nav className="mr-auto">
                 <Link to={"add"} className="nav-link">Add Certificate</Link>
                 <Link to={"list"} className="nav-link">Certificate List</Link>
+            </Nav>
+            <Nav className="justify-content-end" >
                 <Link to={"login-url"} className="nav-link">Login</Link>
+                <Link to={"http://localhost:8081/rest/logout"} className="nav-link">Logout</Link>
             </Nav>
         </Navbar>
     );
