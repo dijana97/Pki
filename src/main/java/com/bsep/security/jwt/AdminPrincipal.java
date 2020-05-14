@@ -1,4 +1,4 @@
-package com.bsep.security;
+package com.bsep.security.jwt;
 
 import com.bsep.domain.Admin;
 import org.springframework.security.core.GrantedAuthority;

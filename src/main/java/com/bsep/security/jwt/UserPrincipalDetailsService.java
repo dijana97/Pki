@@ -1,7 +1,8 @@
-package com.bsep.security;
+package com.bsep.security.jwt;
 
 import com.bsep.domain.Admin;
 import com.bsep.repository.AdminRepository;
+import com.bsep.security.jwt.UserPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

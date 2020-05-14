@@ -1,4 +1,4 @@
-package com.bsep.security;
+package com.bsep.security.jwt;
 import com.auth0.jwt.JWT;
 import com.bsep.domain.Admin;
 import com.bsep.repository.AdminRepository;
