@@ -2,7 +2,7 @@ package com.bsep.service.impl;
 
 import com.bsep.domain.Admin;
 import com.bsep.repository.AdminRepository;
-import com.bsep.security.AdminPrincipal;
+import com.bsep.security.jwt.AdminPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

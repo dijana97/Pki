@@ -2,32 +2,50 @@ package com.bsep.security;
 
 
 import com.bsep.repository.AdminRepository;
+import com.bsep.security.jwt.JwtAuthenticationFilter;
+import com.bsep.security.jwt.JwtAuthorizationFilter;
 import com.bsep.service.impl.AdminPrincipalDetailsService;
+import com.bsep.service.impl.LoginService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.ws.rs.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private AdminPrincipalDetailsService adminPrincipalDetailsService;
 
     private AdminRepository userRepository;
 
-    public SecurityConfiguration(AdminPrincipalDetailsService adminPrincipalDetailsService,AdminRepository userRepository) {
+    private LoginService loginService;
+
+ ///   private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+
+    public SecurityConfiguration(AdminPrincipalDetailsService adminPrincipalDetailsService,AdminRepository userRepository,LoginService loginService/*,/*RestAuthenticationEntryPoint restAuthenticationEntryPoint*/) {
         this.adminPrincipalDetailsService = adminPrincipalDetailsService;
         this.userRepository=userRepository;
+        this.loginService=loginService;
+     //   this.restAuthenticationEntryPoint=restAuthenticationEntryPoint;
     }
 
     @Override
@@ -50,7 +68,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/login/**").permitAll()
                 .antMatchers("/add").hasRole("ADMIN")
                 .antMatchers("/list").hasRole("ADMIN")
-                .antMatchers("/certificates/**").hasRole("ADMIN")
+                .antMatchers("/certificates/type").hasRole("ADMIN")
+                .antMatchers("/certificates/aimroot").permitAll()
+                .antMatchers("/certificates/issuers").hasRole("ADMIN")
                 .anyRequest().authenticated();
     }
 

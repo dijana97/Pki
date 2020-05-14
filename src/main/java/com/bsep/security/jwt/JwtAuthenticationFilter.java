@@ -1,10 +1,9 @@
-package com.bsep.security;
+package com.bsep.security.jwt;
 
 
 import com.auth0.jwt.JWT;
 import com.bsep.domain.LoginViewModel;
 import com.bsep.service.impl.JwtProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,16 +30,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     /* Trigger when we issue POST request to /login
     We also need to pass in {"username":"dan", "password":"dan123"} in the request body
      */
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(LoginViewModel admin, HttpServletResponse response) throws AuthenticationException {
 
         // Grab credentials and map them to login viewmodel
         LoginViewModel credentials = null;
-        try {
-            credentials = new ObjectMapper().readValue(request.getInputStream(), LoginViewModel.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        credentials.setUsername(admin.getUsername());
+        credentials.setPassword(admin.getPassword());
 
         // Create login token
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
