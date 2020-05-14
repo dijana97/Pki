@@ -20,16 +20,16 @@ import java.util.Date;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class JwtAuthenticationFilter{ /*extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
-    /* Trigger when we issue POST request to /login
+    *//* Trigger when we issue POST request to /login
     We also need to pass in {"username":"dan", "password":"dan123"} in the request body
-     */
+     *//*
     public Authentication attemptAuthentication(LoginViewModel admin, HttpServletResponse response) throws AuthenticationException {
 
         // Grab credentials and map them to login viewmodel
@@ -62,5 +62,5 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // Add token in response
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX +  token);
-    }
+    }*/
 }
