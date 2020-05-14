@@ -19,7 +19,7 @@ import java.io.IOException;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
 
-public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+public class JwtAuthorizationFilter{ /* extends BasicAuthenticationFilter {
     private AdminRepository userRepository;
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, AdminRepository userRepository) {
@@ -68,5 +68,5 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return null;
         }
         return null;
-    }
+    }*/
 }

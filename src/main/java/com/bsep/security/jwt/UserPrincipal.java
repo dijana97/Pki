@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal{ /*implements UserDetails {
     private Admin user;
 
     public UserPrincipal(Admin user){
@@ -63,5 +63,5 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.user.getActive() == 1;
-    }
+    }*/
 }

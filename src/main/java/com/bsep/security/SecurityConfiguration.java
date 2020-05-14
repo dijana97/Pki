@@ -1,38 +1,42 @@
 package com.bsep.security;
 
 
-import com.bsep.repository.AdminRepository;
-import com.bsep.security.jwt.JwtAuthenticationFilter;
-import com.bsep.security.jwt.JwtAuthorizationFilter;
-import com.bsep.service.impl.AdminPrincipalDetailsService;
+import com.bsep.security.auth.RestAuthenticationEntryPoint;
+import com.bsep.security.auth.TokenAuthenticationFilter;
 import com.bsep.service.impl.LoginService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
-import javax.ws.rs.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private AdminPrincipalDetailsService adminPrincipalDetailsService;
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-    private AdminRepository userRepository;
+    @Autowired
+    private LoginService jwtUserDetailsService;
 
-    private LoginService loginService;
-
- ///   private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    @Autowired
+    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Bean
     @Override
@@ -40,51 +44,59 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-
-    public SecurityConfiguration(AdminPrincipalDetailsService adminPrincipalDetailsService,AdminRepository userRepository,LoginService loginService/*,/*RestAuthenticationEntryPoint restAuthenticationEntryPoint*/) {
-        this.adminPrincipalDetailsService = adminPrincipalDetailsService;
-        this.userRepository=userRepository;
-        this.loginService=loginService;
-     //   this.restAuthenticationEntryPoint=restAuthenticationEntryPoint;
+    // Definisemo nacin autentifikacije
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authenticationProvider());
-    }
+    @Autowired
+    TokenUtils tokenUtils;
 
+    // Definisemo prava pristupa odredjenim URL-ovima
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                // remove csrf and state in session because in jwt we do not need them
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                // add jwt filters (1. authentication, 2. authorization)
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.userRepository))
-                .authorizeRequests()
-                // configure access rules
-                .antMatchers(HttpMethod.POST, "/login/**").permitAll()
-                .antMatchers("/add").hasRole("ADMIN")
+                // komunikacija izmedju klijenta i servera je stateless
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+
+                // za neautorizovane zahteve posalji 401 gresku
+                .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
+
+                // svim korisnicima dopusti da pristupe putanjama /auth/**, /h2-console/** i
+                // /api/foo
+                .authorizeRequests().antMatchers("/add").hasRole("ADMIN")
                 .antMatchers("/list").hasRole("ADMIN")
                 .antMatchers("/certificates/type").hasRole("ADMIN")
                 .antMatchers("/certificates/aimroot").permitAll()
+                .antMatchers("/login").permitAll()
                 .antMatchers("/certificates/issuers").hasRole("ADMIN")
-                .anyRequest().authenticated();
+                .anyRequest().authenticated().and()
+                .cors()
+                .and()
+                .logout().logoutSuccessUrl("/").permitAll()
+                .and()
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+
+
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
+
     }
 
-    @Bean
-    DaoAuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(this.adminPrincipalDetailsService);
+    // Generalna bezbednost aplikacije
+   @Override
+    public void configure(WebSecurity web) {
+        // TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
+        web.ignoring().antMatchers(HttpMethod.POST);
 
-        return daoAuthenticationProvider;
+        web.ignoring().antMatchers(HttpMethod.GET);
+
+        // web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html",
+        // "/favicon.ico", "/**/*.html",
+        // "/**/*.css", "/**/*.js");
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 }

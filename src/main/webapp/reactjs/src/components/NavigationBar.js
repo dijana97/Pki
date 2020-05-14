@@ -17,7 +17,7 @@ export default function NavigationBar() {
             </Nav>
             <Nav className="justify-content-end" >
                 <Link to={"login-url"} className="nav-link">Login</Link>
-                <Link to={"http://localhost:8081/rest/logout"} className="nav-link">Logout</Link>
+                <Link to={"logout"} className="nav-link">Logout</Link>
             </Nav>
         </Navbar>
     );

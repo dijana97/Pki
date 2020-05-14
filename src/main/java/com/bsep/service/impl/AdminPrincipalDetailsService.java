@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdminPrincipalDetailsService implements UserDetailsService {
+public class AdminPrincipalDetailsService{ /*implements UserDetailsService {
     private AdminRepository adminRepository;
 
     public AdminPrincipalDetailsService(AdminRepository adminRepository) {
@@ -22,5 +22,5 @@ public class AdminPrincipalDetailsService implements UserDetailsService {
         AdminPrincipal adminPrincipal = new AdminPrincipal(admin);
 
         return adminPrincipal;
-    }
+    }*/
 }
