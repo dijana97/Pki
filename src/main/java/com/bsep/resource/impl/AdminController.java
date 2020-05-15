@@ -48,7 +48,8 @@ public class AdminController {
     public ResponseEntity<AdminTokenState> loginUser(@RequestBody JwtAuthenticationRequest authenticationRequest,
                                                      HttpServletResponse response) throws AuthenticationException, IOException {
         Admin log = loginService.loginUser(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-      //  System.out.println(passwordEncoder.encode(authenticationRequest.getPassword()));
+        System.out.println(passwordEncoder.encode("Admin111"));
+        System.out.println("Logovan" + log.getPassword()+log.getUsername());
        //$2a$10$mwePsuQdjt3W2t15GFKIAOYAYzA454sUG6qVaBckFtQmbhBJiOFxS
 
         if (log != null) {

@@ -18,6 +18,7 @@ public class Application implements CommandLineRunner {
 	@Autowired
 	private IService<Certificate> service;
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}

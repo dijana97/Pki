@@ -42,10 +42,16 @@ export default class LoginForm2 extends Component{
                 contentType:'application/json'
              }).then((response)=>{
                  if(response===200){
-                     this.props.history.push('list');
+                    // alert("Niste registrovan korisnik") ;
+                     this.props.history.push('/');
+                     console.log("OKKKKKKKKKKKKKK");
+                 }else{
+                     localStorage.setItem("prijavljen", response.data.accessToken);
+                     this.props.history.push('/list');
+                     console.log("NEEEEEEEEEEEEEE");
                  }
              })
-             this.props.history.push('list');
+          //  this.props.history.push('/list');
          }
 
 
