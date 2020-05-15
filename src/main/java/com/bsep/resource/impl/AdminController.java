@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
@@ -40,10 +41,15 @@ public class AdminController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AdminTokenState> loginUser(@RequestBody JwtAuthenticationRequest authenticationRequest,
                                                      HttpServletResponse response) throws AuthenticationException, IOException {
         Admin log = loginService.loginUser(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+      //  System.out.println(passwordEncoder.encode(authenticationRequest.getPassword()));
+       //$2a$10$mwePsuQdjt3W2t15GFKIAOYAYzA454sUG6qVaBckFtQmbhBJiOFxS
 
         if (log != null) {
             final Authentication authentication = authenticationManager
