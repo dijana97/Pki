@@ -22,7 +22,7 @@ export default function App() {
             <Row>
                 <Col lg={12} className={"margin-top"}>
                     <Switch>
-                        <Route path="/" exact component={() => <Welcome heading={heading}/>}/>
+                        <Route path="/" exact component={LoginForm2}/>
                         <Route path="/add" exact component={Certificate}/>
                         <Route path="/edit/:id" exact component={Certificate}/>
                         <Route path="/download/:id" exact component={CertificateList}/>

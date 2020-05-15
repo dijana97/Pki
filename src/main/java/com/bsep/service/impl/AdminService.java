@@ -30,11 +30,16 @@ public class AdminService implements CommandLineRunner{
 
         this.adminRepository.deleteAll();
 
-        Admin admin1 = new Admin("admin1",passwordEncoder.encode("admin111"),"ADMIN","");
+        Admin admin1 = new Admin("admin1","$2a$10$mwePsuQdjt3W2t15GFKIAOYAYzA454sUG6qVaBckFtQmbhBJiOFxS");
         Admin admin2 = new Admin("admin2",passwordEncoder.encode("admin222"),"ADMIN","");
-        
+        admin1.setActive(1);
         List<Admin> admins = Arrays.asList(admin1,admin2);
 
+
+
         this.adminRepository.saveAll(admins);
+
+
+
     }
 }

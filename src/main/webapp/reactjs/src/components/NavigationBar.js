@@ -16,7 +16,7 @@ export default function NavigationBar() {
                 <Link to={"list"} className="nav-link">Certificate List</Link>
             </Nav>
             <Nav className="justify-content-end" >
-                <Link to={"login-url"} className="nav-link">Login</Link>
+
                 <Link to={"logout"} className="nav-link">Logout</Link>
             </Nav>
         </Navbar>

@@ -17,6 +17,14 @@ public class Authority  implements GrantedAuthority {
 
     String name;
 
+    public Authority(){
+
+    }
+
+    public Authority(String role) {
+        this.name=role;
+    }
+
     @Override
     public String getAuthority() {
         return name;

@@ -23,7 +23,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 
 @Configuration
-@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -48,7 +47,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+
     }
+
 
     @Autowired
     TokenUtils tokenUtils;
@@ -65,12 +66,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 // svim korisnicima dopusti da pristupe putanjama /auth/**, /h2-console/** i
                 // /api/foo
-                .authorizeRequests().antMatchers("/add").hasRole("ADMIN")
-                .antMatchers("/list").hasRole("ADMIN")
-                .antMatchers("/certificates/type").hasRole("ADMIN")
+                .authorizeRequests().antMatchers("/add").permitAll()
+                .antMatchers("/list").permitAll()
+                .antMatchers("/certificates/type").permitAll()
                 .antMatchers("/certificates/aimroot").permitAll()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/certificates/issuers").hasRole("ADMIN")
+                .antMatchers("/certificates/issuers").permitAll()
                 .anyRequest().authenticated().and()
                 .cors()
                 .and()
@@ -90,12 +91,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         // TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
         web.ignoring().antMatchers(HttpMethod.POST);
-
         web.ignoring().antMatchers(HttpMethod.GET);
+       web.ignoring().antMatchers(HttpMethod.PUT);
+       web.ignoring().antMatchers(HttpMethod.DELETE);
 
-        // web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html",
-        // "/favicon.ico", "/**/*.html",
-        // "/**/*.css", "/**/*.js");
     }
 
 
